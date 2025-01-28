@@ -1,0 +1,19 @@
+import tensorflow as tf
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Embedding, LSTM, Dense
+
+# Load pre-trained model
+vgg = VGG16(weights="imagenet", include_top=False)
+input_image = Input(shape=(224, 224, 3))
+features = vgg(input_image)
+
+# Sample Captioning Layer
+caption_input = Input(shape=(None,))
+embedding = Embedding(input_dim=5000, output_dim=256)(caption_input)
+lstm = LSTM(256)(embedding)
+decoder = Dense(5000, activation="softmax")(lstm)
+
+# Model
+model = Model(inputs=[input_image, caption_input], outputs=decoder)
+model.summary()
